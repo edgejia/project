@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>Pi Video Surveillance</title>
+  </head>
+  <body>
+    <div>
+      <h1>Pi Video Surveillance</h1>
+      <img style="width: 720px;height: 600px;" src="{{ url_for('video_feed') }}">
+    </div>
+    <div>
+      <h1>BAD GUY</h1>
+      <img style="width: 412px;height: 412px;" src="{{ url_for('img_feed') }}">
+    </div>
+  </body>
+</html>
