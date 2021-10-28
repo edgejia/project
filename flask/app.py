@@ -3,9 +3,7 @@ from camera import VideoCamera , Consumer
 from cv2 import cv2 as cv2
 import time
 
-
 app = Flask(__name__)
-
 video_stream = VideoCamera()
 
 images = []
@@ -38,7 +36,6 @@ def index():
 def video_feed():
     print(type(gen_video(video_stream)))
     print(gen_video(video_stream))
-    
 
     return Response(gen_video(video_stream),
                 mimetype='multipart/x-mixed-replace; boundary=frame')
