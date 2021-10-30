@@ -54,9 +54,10 @@ class Consumer(threading.Thread):
                 screenshot = image[y : (y+h) , x : (x+w), :]
                 if screenshot.size != 0:
                     #print('get image_' + str(count) + 'in queue')
-                    cv2.imwrite('BAD GUY/bad_' + str(count % 3+1) + '.jpg', screenshot)            
-                    count += 1        
-        time.sleep(0.5)
+                    cv2.imwrite('BAD GUY/bad_' + str(count) + '.jpg', screenshot)                   
+                    count += 1
+                    break           
+        time.sleep(2)
         Flag = False
                 
 
@@ -141,12 +142,13 @@ class VideoCamera(object):
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
                 #print(text)
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-        package = [image , boxes , classIDs]
-        global Flag
-        if 1 in classIDs and Flag == False:
-            Flag = True
-            _Consumer = Consumer(package)
-            _Consumer.start()
+        
+        # package = [image , boxes , classIDs]
+        # global Flag
+        # if 1 in classIDs and Flag == False:
+        #     Flag = True
+        #     _Consumer = Consumer(package)
+        #     _Consumer.start()
 
 
 

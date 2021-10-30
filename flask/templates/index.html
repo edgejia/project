@@ -27,7 +27,7 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto my-2 my-lg-0">
                         <!--<li class="nav-item"><a class="nav-link" href="#test" id='test'>試用</a></li>-->
-                        <li class="nav-item"><a class="nav-link" href="#contact">註冊</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#Register">註冊</a></li>
                     </ul>
                 </div>
             </div>
@@ -52,7 +52,7 @@
             <img  src="{{ url_for('video_feed') }}">
         </section>
         <!-- Contact-->
-        <section class="page-section" id="contact">
+        <section class="page-section" id="Register">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-lg-8 col-xl-6 text-center">
@@ -73,21 +73,26 @@
                         <!-- To make this form functional, sign up at-->
                         <!-- https://startbootstrap.com/solution/contact-forms-->
                         <!-- to get an API token!-->
-                        <form id="regisForm">
+                        <form id="regisForm" method="post" action="{{ url_for('regist') }}">
                             <!-- Name input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="name" type="text" placeholder="Enter your name..." />
+                                <input class="form-control" name="name" type="text" placeholder="Enter your name..." />
                                 <label for="name">會員名稱</label>
                             </div>
                             <!-- Email address input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="email" type="email" placeholder="name@example.com"  />
+                                <input class="form-control" name="email" type="email" placeholder="name@example.com"  />
                                 <label for="email">Email</label>
                             </div>
                             <!-- Phone number input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890" />
+                                <input class="form-control" name="phone" type="tel" placeholder="(123) 456-7890" />
                                 <label for="phone">電話號碼</label>
+                            </div>
+                            <!-- Password input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" name="passwd" type="tel" placeholder=" "/>
+                                <label for="passwd">密碼</label>
                             </div>
                             <!-- Submit error message-->
                             <!---->
