@@ -1,13 +1,7 @@
-from flask_sqlalchemy import  SQLAlchemy
-from flask import Flask
+from gloabalvar import db
 
 
-app = Flask(__name__)
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:b10717024@127.0.0.1:3306/mask_detection"
-
-db = SQLAlchemy(app)
 
 class User(db.Model):
     __tablename__ = 'User'
@@ -34,8 +28,8 @@ class Photo(db.Model):
     def __init__(self, PhotoName=PhotoName, Email=Email):
         self.PhotoName = PhotoName
         self.Email = Email
-db.drop_all()
-db.create_all()
+# db.drop_all()
+# db.create_all()
 # photo = Photo(PhotoName='JIA', Email='abc@gg.cc')
 # db.session.add(photo)
 # db.session.commit()

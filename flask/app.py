@@ -1,10 +1,9 @@
 from flask import render_template, Response, jsonify, request
 from camera import VideoCamera , Consumer
-from cv2 import cv2 as cv2 
-from mysql_operate import*
+from cv2 import cv2
+from mysql_operate import User, Photo
 import os
-
-
+from gloabalvar import app, db
 
 video_stream = VideoCamera()
 
