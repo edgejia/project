@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block masthead %}
+<div class="row gx-4 gx-lg-5 justify-content-center mb-5">
+    <div class="col-lg-6  container px-4 px-lg-5">
+        <form id="registForm" method="POST" action="{{ url_for('register') }}">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-lg-8 col-xl-6 text-center">
+                    <h2 class="mt-0" style="color:white">建立您的帳戶</h2>   
+                </div>                    
+            </div>
+            <!-- Email address input-->
+            <div class="form-floating mb-3">
+                <input class="form-control" name="email" type="email" value='{{ _email }}' placeholder=" " readonly/>
+                <label for="email">電子信箱</label>            
+            </div>
+            <!-- Username input-->
+            <div class="form-floating mb-3">
+                <input class="form-control" name="username" type="username" placeholder=" " required/>
+                <label for="email">使用者名稱</label>
+            </div>
+            <!-- Password input-->
+            <div class="form-floating mb-3">
+                <input class="form-control" name="passwd" type="password" placeholder=" " required/>
+                <label for="confirm_email">密碼</label>
+            </div>
+            <!-- Confirm Password input-->
+            <div class="form-floating mb-3">
+                <input class="form-control" name="passwd2" type="password" placeholder=" " required/>
+                <label for="confirm_email">確認密碼</label>
+            </div>
+            <!-- Submit Button-->
+            <div class="msg row gx-4 gx-lg-5 justify-content-center" style="color:white">{{ msg }}</div>
+            <div class="d-grid"><button class="btn btn-primary btn-xl " id="submitButton" type="submit">Regist</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+

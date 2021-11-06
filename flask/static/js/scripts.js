@@ -57,24 +57,38 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
-const test_btn = document.getElementById('test_btn');
-test_btn.addEventListener('click',function(e){
-    const area = document.getElementById('test');
-    area.style.display = 'flex';
-})
+
+
 const login_btn = document.getElementById('log_btn');
 const register_btn = document.getElementById('reg_btn');
 const reg_field = document.getElementById('reg_field');
 const log_field = document.getElementById('log_field');
+const jumpTOlogin_btn = document.getElementById('jumpTOlogin');
+const jumpTOregister_btn = document.getElementById('jumpTOregister')
 login_btn.addEventListener('click',function(e){
     reg_field.style.display = 'none';
     log_field.style.display = 'flex';
     login_btn.style.backgroundColor = '#f4623a';
     register_btn.style.backgroundColor = '#807f7e';
 })
+
 register_btn.addEventListener('click',function(e){
     reg_field.style.display = 'flex';
     log_field.style.display = 'none';
     login_btn.style.backgroundColor = '#807f7e';
     register_btn.style.backgroundColor = '#f4623a';
+})
+
+jumpTOregister_btn.addEventListener('click',function(e){
+    reg_field.style.display = 'flex';
+    log_field.style.display = 'none';
+    login_btn.style.backgroundColor = '#807f7e';
+    register_btn.style.backgroundColor = '#f4623a';
+})
+
+jumpTOlogin_btn.addEventListener('click',function(e){
+    reg_field.style.display = 'none';
+    log_field.style.display = 'flex';
+    login_btn.style.backgroundColor = '#f4623a';
+    register_btn.style.backgroundColor = '#807f7e';
 })

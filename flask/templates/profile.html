@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block page_top %}
+<div class="collapse navbar-collapse" id="navbarResponsive">
+    <ul class="navbar-nav ms-auto my-2 my-lg-0">
+        <!--<li class="nav-item"><a class="nav-link" href="#test" id='test'>試用</a></li>-->
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}" id='jumpTOregister'>主頁</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}" id='jumpTOregister'>個人資訊</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}" id='jumpTOregister'>登出</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block masthead %}
+<div class="container px-4 px-lg-5 h-100">
+    <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
+        <div class="col-lg-8 align-self-end">
+            <h1 class="text-white font-weight-bold">基本資訊</h1>
+            <hr class="divider" />
+        </div>
+        <div class="col-lg-8 align-self-baseline">
+            <p class="text-white-75 mb-5">
+                名稱：{{ account['username'] }}
+            </p>
+            <p class="text-white-75 mb-5">
+                電子信箱:{{ account['email'] }}
+            </p>
+            <p class="text-white-75 mb-5">
+                密碼:{{ account['password'] }}
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
