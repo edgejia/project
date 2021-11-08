@@ -5,8 +5,7 @@ import MySQLdb.cursors
 import re
 from cv2 import cv2
 import os
-import time
-
+import time    
 app = Flask(__name__)
 
 app.secret_key = 'root'
@@ -111,7 +110,7 @@ def register():
             else:
                 cursor.execute('INSERT INTO accounts VALUES (NULL, %s, %s, %s)', (username, password, email,))
                 mysql.connection.commit()
-                return render_template('index.html')
+                return render_template('success.html')
         else:
             msg = '請確認輸入兩個相同的密碼'
     else:
@@ -134,6 +133,7 @@ def profile():
         account = cursor.fetchone()
         return render_template('profile.html', account=account)
     return redirect(url_for('login'))
+
 
 @app.route('/')
 def index():
