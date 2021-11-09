@@ -12,7 +12,7 @@ app.secret_key = 'root'
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'b10717024'
+app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'mask_detection'
 
 mysql = MySQL(app)
@@ -118,6 +118,7 @@ def register():
     # Show registration form with message (if any)
         
     return render_template('register.html', msg=msg, _email=email)
+
 @app.route('/home')
 def home():
     if 'loggedin' in session:

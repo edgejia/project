@@ -1,12 +1,34 @@
 {% extends 'layout.html' %}
 
 {% block masthead %}
-<div class="row gx-4 gx-lg-5 justify-content-center mb-5">
-    <div class="col-lg-6  container px-4 px-lg-5">
-        <form id="registForm" method="POST" action="{{ url_for('register') }}">
-            <div class="row gx-4 gx-lg-5 justify-content-center">
+<style>
+    .fat{
+        --bs-gutter-x: 1.5rem;
+         --bs-gutter-y: 0;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--bs-gutter-y));
+         margin-left: calc(-0.5 * var(--bs-gutter-x));
+    }
+    .card{
+        background-color:white;
+        position:relative;
+        width:500px;
+        height: 600px;
+        margin:30px;
+        border-radius: 20px;
+        justify-content:center;
+        align-items:center;
+        display: flex;
+    }
+</style>
+<div class="fat gx-4 gx-lg-5 justify-content-center mb-5">
+    <div class="col-lg-6  container px-4 px-lg-5 card">
+        <form id="registForm" method="POST" action="{{ url_for('register') }}" style = "width:85%">
+            <div class="fat gx-4 gx-lg-5 justify-content-center">
                 <div class="col-lg-8 col-xl-6 text-center">
-                    <h2 class="mt-0" style="color:white">建立您的帳戶</h2>   
+                    <img src = '../static/img/user.png' style="width:75px;">
+                    <h3 class="mt-0" style="color:black">建立您的帳戶</h3>   
                 </div>                    
             </div>
             <!-- Email address input-->
