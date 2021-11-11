@@ -1,0 +1,12 @@
+.webcam{
+    z-index:0;
+    top:0;
+    left:0;
+    position: absolute;
+}
+.webimg{
+    z-index:1;
+    top:0;
+    left:0;
+    position: absolute;
+}
