@@ -4,40 +4,32 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary">
-    </Typography>
-  );
-}
+
 
 export default function StickyFooter() {
   return (
     <Box
       sx={{
-        minHeight:'100vh',
+        minHeight:'100%',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        minWidth:'720px'
       }}
     >
       <CssBaseline />
       <Box
         component="footer"
         sx={{
-          py: 3,
-          px: 2,
+          py: 3,//padding y
           mt: 'auto',
-          backgroundColor: (theme) =>
-            theme.palette.mode === 'black'
-              ? theme.palette.grey[200]
-              : theme.palette.grey[800],
+          backgroundColor:'black',
+          color:'white'
         }}
       >
-        <Container maxWidth="sm">
+        <Container minWidth="100%">
           <Typography variant="body1">
             MaskDetection Master
           </Typography>
-          <Copyright />
         </Container>
       </Box>
     </Box>

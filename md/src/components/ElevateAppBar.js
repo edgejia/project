@@ -5,8 +5,10 @@ import Typography from '@mui/material/Typography';
 import CssBaseline from '@mui/material/CssBaseline';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Grid from '@mui/material/Grid';
+import MenuIcon from '@material-ui/icons/Menu';
+import {Link} from 'react-router-dom';
 
 function ElevationScroll(props) {
   const { children} = props;
@@ -29,25 +31,23 @@ export default function ElevateAppBar(props) {
       <ElevationScroll {...props}>
         <AppBar>
           <Toolbar>
-          <Grid 
-          container 
-          justifyContent="space-between"
-          >
-            <Grid item>
-            <Typography variant="h6" component="div">
+            <Typography variant="h6" component="div" style={{flexGrow:1}}>{/*此行以下為左appbar左邊，以上為右邊 */}
               MaskDetection
             </Typography>
-            </Grid>
-            <Grid item>
-                <Button 
-                variant = 'outline' 
-                color="inherit" 
-                startIcon={<AccountCircle/>}
-                size="large"
-                >登入</Button>       {/*component = {}*/ }
-            </Grid>
-            
-            </Grid>
+            <Button 
+            variant = 'outline' 
+            color="inherit" 
+            startIcon={<AccountCircle/>}
+            size="large"
+            component = {Link}
+            to = '/signin'
+            >登入</Button>       {/*component = {}*/ }
+            <IconButton
+            variant = 'outline'
+            color = 'inherit'
+            >
+              <MenuIcon/>
+            </IconButton>
           </Toolbar>
         </AppBar>
 
