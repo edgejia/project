@@ -6,62 +6,6 @@ import queue
 
 Flag = False
 count = 1
-'''
-class Producer(threading.Thread):   
-    def __init__(self, data):
-        threading.Thread.__init__(self)
-        self.__data = data
-
-    def run(self):
-        global Output_Queue
-        global Flag
-        count = 0
-        if Output_Queue.full():
-            print('queue is full')
-            pass
-        else:
-            while True:
-                image = self.__data[0]
-                boxes = self.__data[1]
-                classIDs = self.__data[2]
-                for i in range(len(classIDs)):
-                    if classIDs[i] == 1 :                        
-                        (x, y) = (boxes[i][0], boxes[i][1])
-                        (w, h) = (boxes[i][2], boxes[i][3])
-                        screenshot = image[y : (y+h) , x : (x+w), :]
-                        if screenshot.size != 0:
-                            print('put image_' + str(count) + 'in queue')
-                            Output_Queue.put([screenshot, count])                            
-                            count += 1
-                Flag = False
-                time.sleep(2)
-'''   
-class Consumer(threading.Thread):
-    def __init__(self, data):
-        threading.Thread.__init__(self)
-        self.__data = data
-    def run(self):
-        global Output_Queue
-        global Flag
-        global count
-        image = self.__data[0]
-        boxes = self.__data[1]
-        classIDs = self.__data[2]
-        for i in range(len(classIDs)):
-            if classIDs[i] == 1 :                        
-                (x, y) = (boxes[i][0], boxes[i][1])
-                (w, h) = (boxes[i][2], boxes[i][3])
-                screenshot = image[y : (y+h) , x : (x+w), :]
-                if screenshot.size != 0:
-                    #print('get image_' + str(count) + 'in queue')
-                    cv2.imwrite('BAD GUY/bad_' + str(count) + '.jpg', screenshot)                   
-                    count += 1
-                    break           
-        time.sleep(2)
-        Flag = False
-                
-
-
 
 class VideoCamera(object):
     def __init__(self):
