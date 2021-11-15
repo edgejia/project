@@ -21,7 +21,7 @@ const Camera = () =>{
     const [ws,setws] = useState(null);
 
     const connectws = () =>{
-      setws(io('http://127.0.0.1:3002'))
+      setws(io('https://140.125.45.161:3002',{rejectUnauthorized:true}))
     }
 
     const initwebsocket = () =>{
@@ -53,6 +53,7 @@ const Camera = () =>{
         return;
       }
         const imageSrc = webcamRef.current.getScreenshot();
+        console.log(imageSrc)
         props.emit('mask_detect',{img:imageSrc})
         
       },// eslint-disable-next-line
@@ -75,7 +76,7 @@ const Camera = () =>{
         setIntervalID( 
           setInterval(() => {
           capture(ws)   
-          }, 170)
+          }, 165)
         );
       }else{
         if(ws!=null){
