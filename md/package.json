@@ -17,7 +17,11 @@
     "react-router-dom": "^6.0.2",
     "react-scripts": "4.0.3",
     "react-webcam": "^6.0.0",
-    "web-vitals": "^1.1.2"
+    "socket.io": "^4.3.2",
+    "socket.io-client": "^2.3.0",
+    "web-vitals": "^1.1.2",
+    "ws": "^8.2.3",
+    "wscat": "^5.0.0"
   },
   "scripts": {
     "start": "set PORT=3001 && react-scripts start",
