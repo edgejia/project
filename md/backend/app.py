@@ -9,7 +9,7 @@ import numpy as np
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False,logger=False)
+socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False,logger=False,async_mode='threading')
 @socketio.on('client_event')
 def client_msg(msg):
     email = msg['email']
@@ -105,4 +105,4 @@ def Mask_detection(image):
         return image
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='127.0.0.1', port=3002)
+    socketio.run(app, debug=True, host='0.0.0.0', port=3002,ssl_context=('nginx.crt', 'nginx.key'))
