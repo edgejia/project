@@ -1,0 +1,31 @@
+.container{
+    position: absolute;
+}
+.container .NotShow{
+    height:600px;
+    width:720px;
+    background-color: black;
+}
+.webcam{
+    z-index:1;
+    top:0;
+    left:0;
+    background-color: black;
+}
+.webimg{
+    z-index:2;
+    top:0;
+    left:0;
+    position:absolute;
+}
+.camSwitchpos{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+.tocenter{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height:inherit;
+}

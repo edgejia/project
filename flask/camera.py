@@ -86,6 +86,8 @@ class VideoCamera(object):
         weightsPath = "yolo\yolov4-tiny_last.weights"
         configPath = "yolo/yolov4-tiny.cfg"
         labelsPath = "yolo/voc.names"
+        print(type(image))
+        print(image.shape)
         # 初始化一些参数
         LABELS = open(labelsPath).read().strip().split("\n")  # 物体类别
         COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")  # 颜色
