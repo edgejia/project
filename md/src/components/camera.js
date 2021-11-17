@@ -11,7 +11,7 @@ import * as io from 'socket.io-client';
 const videoConstraints = {
     width: 720,
     height: 600,
-    facingMode: "user"
+    facingMode: "user",
   };
 const Camera = () =>{ 
     const webcamRef = useRef(null);
@@ -67,19 +67,18 @@ const Camera = () =>{
         connectws();
       }
     }
-    // eslint-disable-next-line
-    {/*重複執行useEffect，會一直執行capture,500為延遲*/}
 
     useEffect(() => {
       if(camSwitch){
         setIntervalID( 
           setInterval(() => {
           capture(ws)   
-          }, 170)
+          }, 120)
         );
       }else{
         if(ws!=null){
-            ws.emit('client_discon','disconnect request')
+            ws.emit('client_discon','disconnect request');
+            setws(null);
             console.log('ws!=null')
         }
         clearInterval(IntervalID);
@@ -87,9 +86,7 @@ const Camera = () =>{
       }
         // eslint-disable-next-line
     }, [camSwitch]);
-
     
-
     const webcamcp = () =>{
       if(camSwitch){
         return <>
@@ -105,7 +102,7 @@ const Camera = () =>{
             videoConstraints={videoConstraints}
             mirrored = {true}
             className='webcam'
-            error = ""
+            screenshotQuality = {0.25}
         />
         </>
       }else{

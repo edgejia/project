@@ -37,7 +37,7 @@ def mask_detect(package):
         img = np.frombuffer(bimg,dtype=np.uint8)
         img = cv2.imdecode(img,1)
         Masked_pic =  Mask_detection(img)
-        Masked_pic = cv2.imencode('.jpg',Masked_pic)[1]
+        Masked_pic = cv2.imencode('.jpeg',Masked_pic)[1]
         Masked_pic = header+"," + str(base64.b64encode(Masked_pic))[2:-1]
         
         emit('ret_masked_img',{'img':Masked_pic})

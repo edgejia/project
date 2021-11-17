@@ -5,15 +5,14 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
 
-
 export default function StickyFooter() {
   return (
-    <Box
+    <Box className='fitcontent'
       sx={{
         minHeight:'100%',
         display: 'flex',
         flexDirection: 'column',
-        minWidth:'720px'
+        minWidth:'320px',
       }}
     >
       <CssBaseline />
