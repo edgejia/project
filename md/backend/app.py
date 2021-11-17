@@ -2,21 +2,72 @@ from flask import Flask,request
 from flask_socketio import SocketIO, emit
 import base64
 import cv2
-import numpy as np 
+import numpy as np
+from flask_sqlalchemy import SQLAlchemy
 # base和token會在cmd(命令提示元)，啟動jupyter notebook時出現
 
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False,logger=False,async_mode='threading')
-@socketio.on('client_event')
-def client_msg(msg):
-    email = msg['email']
-    pwd = msg['password']
-    msg = {'email': email, 'passwd': pwd}
-    #emit('server_response', {'data': msg})
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root@localhost:3306/mask_detectionv2"
+
+db = SQLAlchemy(app)
+
+socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False,logger=False)
+
+
+class Acc(db.Model):
+    __tablename__ = 'accounts'
+    Email = db.Column(db.String(64), primary_key=True, nullable=False, unique=True)
+    Username = db.Column(db.String(64), nullable=False, unique=True)
+    Password = db.Column(db.String(64), nullable=False)
     
+    def __init__(self, Email=Email, Username=Username, Password=Password):
+        self.Email = Email
+        self.Username = Username
+        self.Password = Password
+
+
+
+
+
+@socketio.on('signin_event')
+def signin_event(msg):
+    _email = msg['email']
+    _pwd = msg['password']
+    
+    filters = {'Email': _email, 'Password': _pwd}
+    query = Acc.query.filter_by(**filters).first()
+
+    print(query)
+    
+    #emit('server_response', {'data': msg})
+
+@socketio.on('signup_event')
+def signup_event(msg):
+    _email = msg['email']
+    _username = msg['username']
+    _pwd = msg['password']
+    q1 = Acc.query.filter_by(Email=_email).first()
+    if q1:
+        print('此email已被註冊')
+    else:
+        q2 = Acc.query.filter_by(Username=_username).first()
+        if q2:
+            print('此使用者名稱已被使用')
+        else:
+            new_acc = Acc(_email, _username, _pwd)
+            db.session.add(new_acc)
+            db.session.commit()
+            print('註冊成功')
+
+    #emit('server_response', {'data': msg})
+
+
+
 @socketio.on('client_discon')
 def client_discon(msg):
     print(msg)
@@ -24,9 +75,12 @@ def client_discon(msg):
 
 @socketio.on('connect_event')
 def connected_msg(msg):
-    print('[INFO] Web client connected: {}'.format(request.sid))
-    emit('server_response', msg)
-    
+    print(msg)
+    #print('[INFO] Web client connected: {}'.format(request.sid))
+    #emit('server_response', msg)
+
+
+
 @socketio.on('mask_detect')
 def mask_detect(package):
     if (package['img'] != None):
@@ -105,4 +159,4 @@ def Mask_detection(image):
         return image
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=3002,ssl_context=('nginx.crt', 'nginx.key'))
+    socketio.run(app, debug=True, host='127.0.0.1', port=3002)

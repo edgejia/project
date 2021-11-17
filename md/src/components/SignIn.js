@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useCallback, useState, useEffect, useContext, React} from "react";
 import {Link} from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -12,6 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { socketcontext } from "../context/socket";
 
 
 function Copyright(props) {
@@ -24,15 +25,50 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const socket = useContext(socketcontext);
+  const [ws, setws] = useState(null);
+  const [msg, setmsg] = useState(null);
+
+  const connectws = () =>{
+    setws(socket);
+  }
+
+  useEffect(() => {
+    if(ws){
+      console.log('success connect!');
+      initwebsocket();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ws]);
+
+  const initwebsocket = () => {
+    ws.on('connect', function(){
+      ws.emit('connet_event', 'connected to server');
+    })
+    sendMessage()
+  }
+
+  const sendMessage = () => {
+    //以 emit 送訊息，並以 getMessage 為名稱送給 server 捕捉
+    ws.emit('signin_event', msg)
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: data.get('signin_email'),
+      password: data.get('signin_password'),
     });
-  };
+    setmsg({email: data.get('signin_email'), password: data.get('signin_password')});
+
+    if(ws){
+      sendMessage();
+    }
+    else{
+      connectws();
+    }
+   };
 
   return (
     <ThemeProvider theme={theme}>
@@ -57,9 +93,9 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="signin_email"
               label="電子郵件"
-              name="email"
+              name="signin_email"
               autoComplete="email" // eslint-disable-next-line
               inputProps={{ pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" }}   
               placeholder='請輸入電子郵件'
@@ -69,10 +105,10 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              name="password"
+              name="signin_password"
               label="密碼"
               type="password"
-              id="password"
+              id="signin_password"
               autoComplete="current-password"
             />
             <FormControlLabel

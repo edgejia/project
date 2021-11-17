@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {Link} from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -10,6 +9,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { socketcontext } from "../context/socket";
+import { useRef, useCallback, useState, useEffect, useContext, React} from "react";
 
 function Copyright(props) {
   return (
@@ -21,16 +22,50 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const socket = useContext(socketcontext);
+  const [ws, setws] = useState(null);
+  const [msg, setmsg] = useState(null);
+
+  const connectws = () =>{
+    setws(socket);
+  }
+
+  useEffect(() => {
+    if(ws){
+      console.log('success connect!');
+      initwebsocket()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ws]);
+
+  const initwebsocket = () => {
+    ws.on('connect', function(){
+      ws.emit('connet_event', 'connected to server');
+    })
+    sendMessage();
+  }
+
+
+  const sendMessage = () => {
+    //以 emit 送訊息，並以 getMessage 為名稱送給 server 捕捉
+    ws.emit('signup_event', msg)
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
     console.log({
-      firstname: data.get('firstName'),
-      lastname: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
+      email: data.get('signup_email'),
+      username: data.get('signup_username'),
+      password: data.get('signup_password'),
     });
+    setmsg({email: data.get('signup_email'), username: data.get('signup_username'), password: data.get('signup_password')});
+    if(ws){
+      sendMessage();
+    }
+    else{
+      connectws();
+    }
   };
 
   return (
@@ -53,34 +88,13 @@ export default function SignUp() {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="姓氏"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="姓名"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
-                  id="email"
+                  id="signup_email"
                   label="電子郵件"
-                  name="email"
+                  name="signup_email"
                   autoComplete="email" // eslint-disable-next-line
                   inputProps={{ pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" }}   
                   placeholder='請輸入電子郵件'
@@ -88,12 +102,23 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                required
+                fullWidth
+                name="signup_username"
+                label="使用者名稱"
+                type="username"
+                id="signup_username"
+                autoComplete="current-password"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
                   required
                   fullWidth
-                  name="password"
+                  name="signup_password"
                   label="密碼"
                   type="password"
-                  id="password"
+                  id="signup_password"
                   autoComplete="new-password"
                 />
               </Grid>

@@ -1,28 +1,39 @@
-import React from "react";
-import { useRef,useCallback,useState,useEffect} from "react";
+import { useRef, useCallback, useState, useEffect, useContext, React} from "react";
 import Webcam from "react-webcam";
 import './camera.css'
 import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
-import * as io from 'socket.io-client';
+import { socketcontext } from "../context/socket";
+
 
 const videoConstraints = {
     width: 720,
     height: 600,
     facingMode: "user"
   };
+  
 const Camera = () =>{ 
+    const socket = useContext(socketcontext)
     const webcamRef = useRef(null);
     const [IntervalID,setIntervalID] = useState(0);
     const [imgSrc, setImgSrc] = useState(null);
     const [camSwitch,setCamSwitch] = useState(false);
     const [ws,setws] = useState(null);
 
+    
+
     const connectws = () =>{
-      setws(io('https://140.125.45.161:3002',{rejectUnauthorized:true}))
+      setws(socket)
     }
+
+    useEffect(()=>{
+      if(ws){
+        console.log(ws);
+        initwebsocket()
+      }// eslint-disable-next-line
+    },[ws])
 
     const initwebsocket = () =>{
       ws.on('connect',function(){
@@ -39,12 +50,7 @@ const Camera = () =>{
       })
     }
 
-    useEffect(()=>{
-      if(ws){
-        console.log(ws);
-        initwebsocket()
-      }// eslint-disable-next-line
-    },[ws])
+    
 
 
     const capture = useCallback((props) => {//設定捕捉鏡頭
@@ -53,12 +59,30 @@ const Camera = () =>{
         return;
       }
         const imageSrc = webcamRef.current.getScreenshot();
-        console.log(imageSrc)
         props.emit('mask_detect',{img:imageSrc})
         
       },// eslint-disable-next-line
       [webcamRef, setImgSrc]
     );
+    
+
+    useEffect(() => {
+      if(camSwitch){
+        setIntervalID( 
+          setInterval(() => {
+          capture(ws)   
+          }, 170)
+        );
+      }else{
+        if(ws!=null){
+            ws.emit('client_discon','disconnect request')
+            console.log('ws!=null')
+        }
+        clearInterval(IntervalID);
+        setImgSrc(null);
+      }
+        // eslint-disable-next-line
+    }, [camSwitch]);
 
     const handleswitchChange = (event) =>{
       if(camSwitch){
@@ -71,23 +95,7 @@ const Camera = () =>{
     // eslint-disable-next-line
     {/*重複執行useEffect，會一直執行capture,500為延遲*/}
 
-    useEffect(() => {
-      if(camSwitch){
-        setIntervalID( 
-          setInterval(() => {
-          capture(ws)   
-          }, 165)
-        );
-      }else{
-        if(ws!=null){
-            ws.emit('client_discon','disconnect request')
-            console.log('ws!=null')
-        }
-        clearInterval(IntervalID);
-        setImgSrc(null);
-      }
-        // eslint-disable-next-line
-    }, [camSwitch]);
+    
 
     
 
