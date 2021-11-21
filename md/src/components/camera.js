@@ -6,8 +6,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import { socketcontext } from "../context/socket";
-
-
+import { TokenContext } from "../context/token"
 const videoConstraints = {
     width: 720,
     height: 600,
@@ -21,8 +20,8 @@ const Camera = () =>{
     const [imgSrc, setImgSrc] = useState(null);
     const [camSwitch,setCamSwitch] = useState(false);
     const [ws,setws] = useState(null);
-
-    
+    const tokenInfo = useContext(TokenContext);
+    const [invalid, setInvalid] = useState(false);
 
     const connectws = () =>{
       setws(socket)
@@ -45,12 +44,22 @@ const Camera = () =>{
       ws.on('connect_error',function(err){
         console.log("error code "+ err)
       })
+      ws.on('Invalid_success', function(msg){        
+        setInvalid(msg['msg']);
+        console.log('驗證成功')
+      })
+      ws.emit('Invalid_token', tokenInfo.tokenContext);
+      ws.on('Invalid_fail', function(msg){
+        setInvalid(msg['msg']);
+        console.log('驗證失敗')
+      }) 
       ws.on('ret_masked_img',function(pkg){
         setImgSrc(pkg.img);
       })
+      
     }
 
-    
+
 
 
     const capture = useCallback((props) => {//設定捕捉鏡頭
@@ -58,8 +67,8 @@ const Camera = () =>{
         clearInterval(IntervalID);
         return;
       }
-        const imageSrc = webcamRef.current.getScreenshot();
-        props.emit('mask_detect',{img:imageSrc})
+      const imageSrc = webcamRef.current.getScreenshot();
+      props.emit('mask_detect',{img:imageSrc})
         
       },// eslint-disable-next-line
       [webcamRef, setImgSrc]
@@ -85,11 +94,14 @@ const Camera = () =>{
     }, [camSwitch]);
 
     const handleswitchChange = (event) =>{
+      console.log(tokenInfo.tokenContext)
       if(camSwitch){
         setCamSwitch(false);
-      }else{
-        setCamSwitch(true);
+      }
+      else{
         connectws();
+        setCamSwitch(true);
+        
       }
     }
     // eslint-disable-next-line

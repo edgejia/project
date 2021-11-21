@@ -1,50 +1,53 @@
-from flask import Flask,request
+from flask import Flask
 from flask_socketio import SocketIO, emit
+from flask_sqlalchemy import SQLAlchemy
 import base64
 import cv2
 import numpy as np
-from flask_sqlalchemy import SQLAlchemy
-# base和token會在cmd(命令提示元)，啟動jupyter notebook時出現
+import jwt
+import time
 
+SECRET_KEY = 'peko'
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
-app.config['SECRET_KEY'] = 'secret!'
-
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root@localhost:3306/mask_detectionv2"
 
+
 db = SQLAlchemy(app)
 
-socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False,logger=False)
+socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False, logger=False)
 
 
 class Acc(db.Model):
     __tablename__ = 'accounts'
-    Email = db.Column(db.String(64), primary_key=True, nullable=False, unique=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Email = db.Column(db.String(64), nullable=False, unique=True)
     Username = db.Column(db.String(64), nullable=False, unique=True)
-    Password = db.Column(db.String(64), nullable=False)
+    Password = db.Column(db.String(128), nullable=False)
+    active = db.Column(db.Boolean, default=False, nullable=False)
     
-    def __init__(self, Email=Email, Username=Username, Password=Password):
+    def __init__(self, Email=None, Username=None, Password=None, active=True):
         self.Email = Email
         self.Username = Username
         self.Password = Password
-
-
+        self.active = active
 
 
 
 @socketio.on('signin_event')
 def signin_event(msg):
+    
     _email = msg['email']
     _pwd = msg['password']
-    
     filters = {'Email': _email, 'Password': _pwd}
     query = Acc.query.filter_by(**filters).first()
+    payload = {'id': query.id, 'Email': query.Email}
+    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    emit('getToken', {'token': token})
 
-    print(query)
-    
-    #emit('server_response', {'data': msg})
 
 @socketio.on('signup_event')
 def signup_event(msg):
@@ -66,7 +69,17 @@ def signup_event(msg):
 
     #emit('server_response', {'data': msg})
 
-
+@socketio.on('Invalid_token')
+def invalid_token(token):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        query = Acc.query.filter_by(**payload).first()
+        if query:
+            print('True')
+            emit('Invalid_success', {'msg': True})
+    except:
+        print('false')
+        emit('Invalid_fail', {'msg': False})
 
 @socketio.on('client_discon')
 def client_discon(msg):

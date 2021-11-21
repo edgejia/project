@@ -1,5 +1,5 @@
-import { useRef, useCallback, useState, useEffect, useContext, React} from "react";
-import {Link} from 'react-router-dom';
+import { useState, useEffect, useContext, React} from "react";
+import {Link,useLocation} from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { socketcontext } from "../context/socket";
+import { TokenContext} from "../context/token"
 
 
 function Copyright(props) {
@@ -27,17 +28,20 @@ const theme = createTheme();
 export default function SignIn() {
   const socket = useContext(socketcontext);
   const [ws, setws] = useState(null);
-  const [msg, setmsg] = useState(null);
-
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const tokenInfo = useContext(TokenContext);
+  const location = useLocation();
   const connectws = () =>{
     setws(socket);
   }
 
   useEffect(() => {
     if(ws){
-      console.log('success connect!');
       initwebsocket();
+      console.log('success connect!');
     }
+    console.log(location)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ws]);
 
@@ -45,31 +49,30 @@ export default function SignIn() {
     ws.on('connect', function(){
       ws.emit('connet_event', 'connected to server');
     })
-    sendMessage()
+    
+    ws.emit('signin_event', {email: email, password: password});
+    ws.on('getToken', function(msg){
+      tokenInfo.setTokenByDispatch({type: "SET", value: msg['token']});
+    })
   }
 
-  const sendMessage = () => {
-    //以 emit 送訊息，並以 getMessage 為名稱送給 server 捕捉
-    ws.emit('signin_event', msg)
-  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('signin_email'),
-      password: data.get('signin_password'),
-    });
-    setmsg({email: data.get('signin_email'), password: data.get('signin_password')});
+    connectws();
+  };
 
-    if(ws){
-      sendMessage();
-    }
-    else{
-      connectws();
-    }
-   };
+  const handleChange_email = (event) =>{
+    setEmail(event.target.value);
+  };
 
+  const handleChange_password = (event) =>{
+    setPassword(event.target.value);
+  };
+
+  const abc = (event) =>{
+    console.log(tokenInfo.tokenContext);
+  }
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -93,13 +96,13 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="signin_email"
               label="電子郵件"
               name="signin_email"
               autoComplete="email" // eslint-disable-next-line
               inputProps={{ pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" }}   
               placeholder='請輸入電子郵件'
               autoFocus
+              onChange={handleChange_email}
             />
             <TextField
               margin="normal"
@@ -108,8 +111,8 @@ export default function SignIn() {
               name="signin_password"
               label="密碼"
               type="password"
-              id="signin_password"
               autoComplete="current-password"
+              onChange={handleChange_password}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -123,6 +126,7 @@ export default function SignIn() {
             >
               登入
             </Button>
+            <Button onClick={abc}>abc</Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link 
@@ -133,6 +137,7 @@ export default function SignIn() {
               </Grid>
             </Grid>
           </Box>
+
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
