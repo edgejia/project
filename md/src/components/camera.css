@@ -77,21 +77,6 @@
         top:calc(4.5rem + 56px);
     }
   }
-  @media (max-width: 600px) {
-    .container .NotShow{
-        height:300px;
-        width:420px;
-        background-color: black;
-    }
-    .webcam{
-        height:300px;
-        width:420px;
-    }
-    .webimg{
-        height:300px;
-        width:420px;
-    }
-  }
   @media (max-width: 500px) {
     .container .NotShow{
         height:300px;
