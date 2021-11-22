@@ -23,7 +23,7 @@
 .webimg{
     z-index:5;
     position: absolute;
-    /*padding-bottom: 2.5rem;*/
+    top:calc(10rem + 64px);
 }
 .camSwitchpos{
     display: flex;
@@ -43,6 +43,7 @@
     .webimg{
         height:500px;
         width:620px;
+        top:calc(4.5rem + 64px);
     }
   }
   @media (max-width: 720px) {
@@ -73,6 +74,7 @@
     .webimg{
         height:300px;
         width:420px;
+        top:calc(4.5rem + 56px);
     }
   }
   @media (max-width: 600px) {

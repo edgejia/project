@@ -46,7 +46,6 @@ const Camera = () =>{
       }// eslint-disable-next-line
     },[ws])
 
-
     const capture = useCallback((props) => {//設定捕捉鏡頭
       if(webcamRef.current==null){
         clearInterval(IntervalID);
@@ -88,6 +87,7 @@ const Camera = () =>{
     }, [camSwitch]);
     
     const webcamcp = () =>{
+      
       if(camSwitch){
         return <>
         {imgSrc && (// eslint-disable-next-line
