@@ -1,38 +1,28 @@
-import { useRef, useCallback, useState, useEffect, useContext, React} from "react";
+import React from "react";
+import { useRef,useCallback,useState,useEffect} from "react";
 import Webcam from "react-webcam";
 import './camera.css'
 import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
-import { socketcontext } from "../context/socket";
-import { TokenContext } from "../context/token"
+import * as io from 'socket.io-client';
+
 const videoConstraints = {
     width: 720,
     height: 600,
-    facingMode: "user"
+    facingMode: "user",
   };
-  
 const Camera = () =>{ 
-    const socket = useContext(socketcontext)
     const webcamRef = useRef(null);
     const [IntervalID,setIntervalID] = useState(0);
     const [imgSrc, setImgSrc] = useState(null);
     const [camSwitch,setCamSwitch] = useState(false);
     const [ws,setws] = useState(null);
-    const tokenInfo = useContext(TokenContext);
-    const [invalid, setInvalid] = useState(false);
 
     const connectws = () =>{
-      setws(socket)
+      setws(io('http://127.0.0.1:3002'))
     }
-
-    useEffect(()=>{
-      if(ws){
-        console.log(ws);
-        initwebsocket()
-      }// eslint-disable-next-line
-    },[ws])
 
     const initwebsocket = () =>{
       ws.on('connect',function(){
@@ -44,47 +34,50 @@ const Camera = () =>{
       ws.on('connect_error',function(err){
         console.log("error code "+ err)
       })
-      ws.on('Invalid_success', function(msg){        
-        setInvalid(msg['msg']);
-        console.log('驗證成功')
-      })
-      ws.emit('Invalid_token', tokenInfo.tokenContext);
-      ws.on('Invalid_fail', function(msg){
-        setInvalid(msg['msg']);
-        console.log('驗證失敗')
-      }) 
       ws.on('ret_masked_img',function(pkg){
         setImgSrc(pkg.img);
       })
-      
     }
 
-
-
+    useEffect(()=>{
+      if(ws){
+        console.log(ws);
+        initwebsocket()
+      }// eslint-disable-next-line
+    },[ws])
 
     const capture = useCallback((props) => {//設定捕捉鏡頭
       if(webcamRef.current==null){
         clearInterval(IntervalID);
         return;
       }
-      const imageSrc = webcamRef.current.getScreenshot();
-      props.emit('mask_detect',{img:imageSrc})
+        const imageSrc = webcamRef.current.getScreenshot();
+        props.emit('mask_detect',{img:imageSrc})
         
       },// eslint-disable-next-line
       [webcamRef, setImgSrc]
     );
-    
+
+    const handleswitchChange = (event) =>{
+      if(camSwitch){
+        setCamSwitch(false);
+      }else{
+        setCamSwitch(true);
+        connectws();
+      }
+    }
 
     useEffect(() => {
       if(camSwitch){
         setIntervalID( 
           setInterval(() => {
           capture(ws)   
-          }, 170)
+          }, 120)
         );
       }else{
         if(ws!=null){
-            ws.emit('client_discon','disconnect request')
+            ws.emit('client_discon','disconnect request');
+            setws(null);
             console.log('ws!=null')
         }
         clearInterval(IntervalID);
@@ -92,26 +85,9 @@ const Camera = () =>{
       }
         // eslint-disable-next-line
     }, [camSwitch]);
-
-    const handleswitchChange = (event) =>{
-      console.log(tokenInfo.tokenContext)
-      if(camSwitch){
-        setCamSwitch(false);
-      }
-      else{
-        connectws();
-        setCamSwitch(true);
-        
-      }
-    }
-    // eslint-disable-next-line
-    {/*重複執行useEffect，會一直執行capture,500為延遲*/}
-
     
-
-    
-
     const webcamcp = () =>{
+      
       if(camSwitch){
         return <>
         {imgSrc && (// eslint-disable-next-line
@@ -126,7 +102,7 @@ const Camera = () =>{
             videoConstraints={videoConstraints}
             mirrored = {true}
             className='webcam'
-            error = ""
+            screenshotQuality = {0.25}
         />
         </>
       }else{

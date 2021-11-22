@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {Link} from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -9,8 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { socketcontext } from "../context/socket";
-import { useRef, useCallback, useState, useEffect, useContext, React} from "react";
+import UStateContex from './UStateContext';
 
 function Copyright(props) {
   return (
@@ -22,50 +22,11 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
-  const socket = useContext(socketcontext);
-  const [ws, setws] = useState(null);
-  const [msg, setmsg] = useState(null);
-
-  const connectws = () =>{
-    setws(socket);
-  }
-
-  useEffect(() => {
-    if(ws){
-      console.log('success connect!');
-      initwebsocket()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ws]);
-
-  const initwebsocket = () => {
-    ws.on('connect', function(){
-      ws.emit('connet_event', 'connected to server');
-    })
-    sendMessage();
-  }
-
-
-  const sendMessage = () => {
-    //以 emit 送訊息，並以 getMessage 為名稱送給 server 捕捉
-    ws.emit('signup_event', msg)
-  }
-
+  const USX = React.useContext(UStateContex);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('signup_email'),
-      username: data.get('signup_username'),
-      password: data.get('signup_password'),
-    });
-    setmsg({email: data.get('signup_email'), username: data.get('signup_username'), password: data.get('signup_password')});
-    if(ws){
-      sendMessage();
-    }
-    else{
-      connectws();
-    }
+    USX.signup(data.get('signup_email'),data.get('signup_username'),data.get('signup_password'))
   };
 
   return (

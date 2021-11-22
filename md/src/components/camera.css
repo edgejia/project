@@ -1,31 +1,109 @@
 .container{
-    position: absolute;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column;
 }
 .container .NotShow{
     height:600px;
     width:720px;
     background-color: black;
 }
-.webcam{
-    z-index:1;
-    top:0;
-    left:0;
-    background-color: black;
-}
-.webimg{
-    z-index:2;
-    top:0;
-    left:0;
-    position:absolute;
-}
-.camSwitchpos{
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-}
-.tocenter{
+.container .NotShow .tocenter{
     display: flex;
     justify-content: center; 
     align-items: center; 
     height:inherit;
 }
+.webcam{
+    z-index:1;
+    position: relative;
+    background-color: black;
+}
+.webimg{
+    z-index:5;
+    position: absolute;
+    top:calc(10rem + 64px);
+}
+.camSwitchpos{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    z-index: 10;
+}
+@media (max-width: 992px) {
+    .container .NotShow{
+        height:500px;
+        width:620px;
+    }
+    .webcam{
+        height:500px;
+        width:620px;
+    }
+    .webimg{
+        height:500px;
+        width:620px;
+        top:calc(4.5rem + 64px);
+    }
+  }
+  @media (max-width: 720px) {
+    .container .NotShow{
+        height:400px;
+        width:520px;
+        background-color: black;
+    }
+    .webcam{
+        height:400px;
+        width:520px;
+    }
+    .webimg{
+        height:400px;
+        width:520px;
+    }
+  }
+  @media (max-width: 600px) {
+    .container .NotShow{
+        height:300px;
+        width:420px;
+        background-color: black;
+    }
+    .webcam{
+        height:300px;
+        width:420px;
+    }
+    .webimg{
+        height:300px;
+        width:420px;
+        top:calc(4.5rem + 56px);
+    }
+  }
+  @media (max-width: 500px) {
+    .container .NotShow{
+        height:300px;
+        width:320px;
+        background-color: black;
+    }
+    .webcam{
+        height:300px;
+        width:320px;
+    }
+    .webimg{
+        height:300px;
+        width:320px;
+    }
+  }
+  @media (max-width: 320px) {
+    .container .NotShow{
+        height:200px;
+        width:220px;
+        background-color: black;
+    }
+    .webcam{
+        height:200px;
+        width:220px;
+    }
+    .webimg{
+        height:200px;
+        width:220px;
+    }
+  }

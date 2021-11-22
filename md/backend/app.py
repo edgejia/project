@@ -1,25 +1,24 @@
-from flask import Flask
+from logging import Manager
+from flask import Flask,request
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
 import base64
 import cv2
-import numpy as np
+import numpy as np 
 import jwt
-import time
+# base和token會在cmd(命令提示元)，啟動jupyter notebook時出現
 
-SECRET_KEY = 'peko'
 
 app = Flask(__name__)
+
+SECRET_KEY = 'secret!'
+
 app.config["DEBUG"] = True
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:root@localhost:3306/mask_detectionv2"
-
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:123456@localhost:3306/mask_detection"
 
 db = SQLAlchemy(app)
-
-socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False, logger=False)
-
 
 class Acc(db.Model):
     __tablename__ = 'accounts'
@@ -28,58 +27,43 @@ class Acc(db.Model):
     Username = db.Column(db.String(64), nullable=False, unique=True)
     Password = db.Column(db.String(128), nullable=False)
     active = db.Column(db.Boolean, default=False, nullable=False)
-    
     def __init__(self, Email=None, Username=None, Password=None, active=True):
         self.Email = Email
         self.Username = Username
         self.Password = Password
         self.active = active
 
-
+socketio = SocketIO(app,cors_allowed_origins = '*', always_connect=True, engineio_logger=False,logger=False)
 
 @socketio.on('signin_event')
-def signin_event(msg):
-    
-    _email = msg['email']
-    _pwd = msg['password']
-    filters = {'Email': _email, 'Password': _pwd}
+def client_msg(msg):
+    email = msg['email']
+    pwd = msg['password']
+    filters = {'Email': email, 'Password': pwd}
     query = Acc.query.filter_by(**filters).first()
     payload = {'id': query.id, 'Email': query.Email}
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     emit('getToken', {'token': token})
-
-
+    
 @socketio.on('signup_event')
 def signup_event(msg):
     _email = msg['email']
     _username = msg['username']
     _pwd = msg['password']
+    retmsg = ''
     q1 = Acc.query.filter_by(Email=_email).first()
     if q1:
-        print('此email已被註冊')
+        retmsg = '此email已被註冊'
     else:
         q2 = Acc.query.filter_by(Username=_username).first()
         if q2:
-            print('此使用者名稱已被使用')
+            retmsg = '此使用者名稱已被使用'
         else:
             new_acc = Acc(_email, _username, _pwd)
             db.session.add(new_acc)
             db.session.commit()
-            print('註冊成功')
-
-    #emit('server_response', {'data': msg})
-
-@socketio.on('Invalid_token')
-def invalid_token(token):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        query = Acc.query.filter_by(**payload).first()
-        if query:
-            print('True')
-            emit('Invalid_success', {'msg': True})
-    except:
-        print('false')
-        emit('Invalid_fail', {'msg': False})
+            retmsg = '註冊成功'
+    emit('signevent',retmsg)
 
 @socketio.on('client_discon')
 def client_discon(msg):
@@ -88,12 +72,10 @@ def client_discon(msg):
 
 @socketio.on('connect_event')
 def connected_msg(msg):
-    print(msg)
     #print('[INFO] Web client connected: {}'.format(request.sid))
-    #emit('server_response', msg)
-
-
-
+    print('client:'+msg)
+    emit('server_response', msg)
+    
 @socketio.on('mask_detect')
 def mask_detect(package):
     if (package['img'] != None):
@@ -104,7 +86,7 @@ def mask_detect(package):
         img = np.frombuffer(bimg,dtype=np.uint8)
         img = cv2.imdecode(img,1)
         Masked_pic =  Mask_detection(img)
-        Masked_pic = cv2.imencode('.jpg',Masked_pic)[1]
+        Masked_pic = cv2.imencode('.jpeg',Masked_pic)[1]
         Masked_pic = header+"," + str(base64.b64encode(Masked_pic))[2:-1]
         
         emit('ret_masked_img',{'img':Masked_pic})
@@ -120,6 +102,9 @@ def Mask_detection(image):
         confidences = []
         classIDs = []
         net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
+        #使用cuda加速
+        net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+        net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         
         (H, W) = image.shape[:2]
         # 得到 YOLO需要的输出层
@@ -172,4 +157,6 @@ def Mask_detection(image):
         return image
 
 if __name__ == '__main__':
+    db.create_all()
     socketio.run(app, debug=True, host='127.0.0.1', port=3002)
+    
