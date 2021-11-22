@@ -27,7 +27,7 @@ export default function StickyFooter() {
       >
         <Container minWidth="100%">
           <Typography variant="body1">
-            MaskDetection Master
+            MaskDetection
           </Typography>
         </Container>
       </Box>

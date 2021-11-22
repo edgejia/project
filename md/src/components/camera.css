@@ -1,5 +1,8 @@
 .container{
-    position: absolute;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    
 }
 .container .NotShow{
     height:600px;
@@ -8,14 +11,14 @@
 }
 .webcam{
     z-index:1;
-    top:0;
+    top:300;
     left:0;
     background-color: black;
 }
 .webimg{
     z-index:2;
     top:0;
-    left:0;
+    left:300;
     position:absolute;
 }
 .camSwitchpos{

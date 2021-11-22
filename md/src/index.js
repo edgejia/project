@@ -6,14 +6,16 @@ import { BrowserRouter, Routes,Route} from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
-
+import {UStateContexProvider} from './components/UStateContext';
 ReactDOM.render(
   <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App/>}/>    {/*react-router-dom v6改用這個 */}
-      <Route path="/signin" element ={<SignIn/>}/>
-      <Route path="/signup" element ={<SignUp/>}/>
-    </Routes>
+  <UStateContexProvider>
+      <Routes>
+        <Route path="/" element={<App/>}/>    {/*react-router-dom v6改用這個 */}
+        <Route path="/signin" element ={<SignIn/>}/>
+        <Route path="/signup" element ={<SignUp/>}/>
+      </Routes>
+    </UStateContexProvider>
   </BrowserRouter>,
   document.getElementById('root')
 );
