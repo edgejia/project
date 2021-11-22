@@ -25,18 +25,13 @@ function ElevationScroll(props) {
 }
 export default function ElevateAppBar(props) {
   const USX = React.useContext(UStateContex);
-  const [ustoken,setustoken] = React.useState(USX.token);
   const handleLogout = ()=>{
-    setustoken(null);
     USX.logout();
   }
 
-  React.useEffect(()=>{
-    return;
-  },[ustoken])
 
   const btnstat = ()=>{
-    if(!ustoken){
+    if(!USX.token){
       return <>
       <Button 
       variant = 'outline' 

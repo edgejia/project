@@ -45,6 +45,7 @@ export const UStateContexProvider = (props)=>{
         settoken(null);
         sessionStorage.removeItem('token');
         alert('已登出');
+        window.location.href = '/';
     }
 
     const initwebsocket = () => {
@@ -63,9 +64,9 @@ export const UStateContexProvider = (props)=>{
             }else if(msg==='此使用者名稱已被使用'){
                 alert('此使用者名稱已被使用，請更換使用者名稱');
             }else if(msg==='註冊成功'){
-                alert('註冊成功，請重新登入')
+                alert('註冊成功，請重新登入');
+                window.location.href = '/';
             }
-            window.location.href = '/';
         })
     }
 

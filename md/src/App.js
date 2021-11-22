@@ -9,7 +9,6 @@ function App() {
   const USX = useContext(UStateContex);
   if(sessionStorage.getItem('token')){
     USX.token = sessionStorage.getItem('token');
-    console.log(USX.token);//init null
   }
   return (
     <div>
